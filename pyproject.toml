@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "bots"
+version = "0.1.0"
+description = ""
+authors = ["Александр <tarasov.slavas2002@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+aiogram = "^2.22.2"
+python-dotenv = "^0.21.0"
+
+
+[tool.poetry.group.dev.dependencies]
+flake8 = "^5.0.4"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
