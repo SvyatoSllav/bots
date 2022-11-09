@@ -1,25 +1,46 @@
-import os
-from pathlib import Path
-from dotenv import load_dotenv
+import asyncio
 
 from aiogram import Bot, Dispatcher, types
-from aiogram.utils import executor
+from aiogram.filters import Command
 
-parent_path = Path(__file__).resolve().parent.parent
-dotenv_path = os.path.join(str(parent_path), '.env')
-if os.path.exists(dotenv_path):
-    load_dotenv(dotenv_path)
+from pydantic import ValidationError
+from loguru import logger
 
-bot = Bot(token=os.environ.get("BOT_TOKEN"))
-
-dp = Dispatcher(bot=bot)
+from config import load_config
 
 
-@dp.message_handler()
-async def get_messsage(message: types.Message):
-    chat_id = message.chat.id
-    await bot.send_message(chat_id=chat_id, text=message.text)
+config = load_config()
+
+
+dp = Dispatcher()
+
+
+@dp.message(Command(commands=["start"]))
+async def cmd_start(message: types.Message):
+    logger.info("Пришла комманда start")
+    await message.reply("Hello")
+
+
+@dp.message(Command(commands=["dice"]))
+async def cmd_dice(message: types.Message, bot: Bot):
+    logger.info("Пришла комманда dice")
+    await bot.send_dice(message.chat.id, emoji="🎲")
+
+
+@dp.message()
+async def echo_answer(message: types.Message):
+    try:
+        logger.info(f"Пришло сообщение {message.text}")
+        await message.reply(message.text)
+    except ValidationError:
+        logger.error("Пришло сообщение не валидного типа (не текст и не смайлик).")
+        await message.answer("Nice try")
+
+
+async def main():
+    bot = Bot(token=config.tg_bot.bot_token)
+    await dp.start_polling(bot)
 
 
 if __name__ == "__main__":
-    executor.start_polling(dispatcher=dp)
+    asyncio.run(main())
