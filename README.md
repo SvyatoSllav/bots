@@ -1,2 +1,7 @@
-# bots
-My pet project bots
+# Описание
+Репозиторий с пет телеграмм ботами
+
+# Запуск
+```
+poetry run <bot_file_name>
+```
