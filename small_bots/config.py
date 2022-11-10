@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from environs import Env
 
 
-@dataclass
+@dataclass(frozen=True)
 class TgBot:
     bot_token: SecretStr
 
